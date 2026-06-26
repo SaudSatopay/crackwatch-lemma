@@ -129,7 +129,7 @@ erDiagram
 
     reports {
         serial ref
-        enum status "new→triaged→pending_approval→dispatched→resolved"
+        enum status "new to resolved"
         enum damage_type
         float severity "0-100"
         int est_cost_inr
@@ -139,13 +139,13 @@ erDiagram
     contractors {
         text name
         text sector
-        float negligence_score "the wall of shame"
+        float negligence_score "wall of shame"
         int assigned_count
         int resolved_count
     }
     report_events {
         uuid report_id
-        enum kind "triaged·approved·dispatched·resolved"
+        enum kind "triaged, approved, dispatched"
         text actor
     }
 ```
