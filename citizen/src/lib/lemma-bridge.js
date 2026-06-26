@@ -290,6 +290,11 @@ async function getReports() {
   return (res && res.items) || [];
 }
 
+async function getContractors() {
+  const res = await client.records.list("contractors", { limit: 200 });
+  return (res && res.items) || [];
+}
+
 function citizenReportRow(r) {
   const [lat, lng] = coordsFor(r);
   const c = reportCache.get(String(r.id));
@@ -420,6 +425,23 @@ async function h_stats() {
   };
 }
 
+// Contractor "wall of shame" — ranked worst-first by negligence (unresolved load).
+async function h_wallOfShame() {
+  const cs = (await getContractors()).slice();
+  cs.sort((a, b) => num(b.negligence_score) - num(a.negligence_score));
+  return {
+    leaderboard: cs.map((c, i) => {
+      const total = num(c.assigned_count), fixed = num(c.resolved_count);
+      return {
+        contractor_id: c.id, rank: i + 1, contractor_name: c.name, area: c.sector || "—",
+        performance_score: total ? Math.round((fixed / total) * 100) : 0,
+        total_reports: total, fixed, unfixed: Math.max(0, total - fixed),
+        negligence_score: Math.round(num(c.negligence_score)), status: c.status || "active",
+      };
+    }),
+  };
+}
+
 async function h_gamProfile(userKey) {
   const p = await getOrCreateProfile(userKey, userKey);
   const level = calculateLevel(p.xp);
@@ -512,6 +534,7 @@ async function route(method, path, body) {
   if (path === "/public/report" && method === "POST") return jsonResponse(await h_publicReport(body));
   if (path === "/public/reports/map/detail" || path === "/public/reports/map") return jsonResponse(await h_reportsMap());
   if (path === "/public/stats") return jsonResponse(await h_stats());
+  if (path === "/public/wall-of-shame") return jsonResponse(await h_wallOfShame());
   let m = path.match(/^\/public\/reports\/([^/]+)\/upvote$/);
   if (m && method === "POST") return jsonResponse({ ok: true, id: m[1] });
   m = path.match(/^\/public\/reports\/([^/]+)$/);
