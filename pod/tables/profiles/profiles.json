@@ -1,0 +1,24 @@
+{
+  "name": "profiles",
+  "primary_key_column": "id",
+  "enable_rls": false,
+  "visibility": "POD",
+  "columns": [
+    { "name": "user_key", "type": "TEXT", "required": true, "max_length": 120, "unique": true, "description": "Citizen identity (their chosen display name) — the gamification key" },
+    { "name": "name", "type": "TEXT", "max_length": 120, "description": "Display name" },
+    { "name": "xp", "type": "INTEGER", "default": 0, "description": "Experience points" },
+    { "name": "coins", "type": "INTEGER", "default": 50, "description": "Civic coins (50 starting bonus)" },
+    { "name": "level", "type": "INTEGER", "default": 1, "description": "Derived: max(1, floor(sqrt(xp/100))+1)" },
+    { "name": "streak_days", "type": "INTEGER", "default": 0, "description": "Consecutive reporting days" },
+    { "name": "last_report_date", "type": "TEXT", "max_length": 20, "description": "ISO date (YYYY-MM-DD) of last report" },
+    { "name": "total_reports", "type": "INTEGER", "default": 0 },
+    { "name": "total_points", "type": "INTEGER", "default": 0 },
+    { "name": "verifications", "type": "INTEGER", "default": 0, "description": "Community report verifications" },
+    { "name": "ai_challenge_score", "type": "INTEGER", "default": 0, "description": "Correct AI-challenge answers" },
+    { "name": "ai_challenges_played", "type": "INTEGER", "default": 0 },
+    { "name": "achievements", "type": "JSON", "description": "Array of earned achievement ids" },
+    { "name": "sectors_reported", "type": "JSON", "description": "Array of distinct sectors reported (for the Inspector badge)" },
+    { "name": "recent_reports", "type": "JSON", "description": "Recent report timestamps (epoch ms) for the Fast Reporter badge" }
+  ],
+  "config": {}
+}

@@ -1,0 +1,5 @@
+{
+  "name": "citizen-app",
+  "description": "CrackWatch Citizen — a mobile PWA on a Lemma pod. Snap a photo; real in-browser YOLOv8 triages the road damage, logs it to the pod, and rewards you with XP, coins, streaks and badges. Live damage map, pothole-avoiding safe routing, and a civic leaderboard.",
+  "public_slug": "crackwatch-citizen"
+}
