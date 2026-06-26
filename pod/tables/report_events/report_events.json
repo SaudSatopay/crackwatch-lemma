@@ -1,0 +1,13 @@
+{
+  "name": "report_events",
+  "primary_key_column": "id",
+  "enable_rls": false,
+  "visibility": "POD",
+  "columns": [
+    { "name": "report_id", "type": "UUID", "required": true, "description": "reports.id this event belongs to" },
+    { "name": "kind", "type": "ENUM", "required": true, "options": ["reported", "triaged", "approved", "rejected", "dispatched", "resolved", "escalated"] },
+    { "name": "note", "type": "TEXT" },
+    { "name": "actor", "type": "TEXT", "max_length": 120, "description": "Who/what caused it (agent, inspector name, system)" }
+  ],
+  "config": {}
+}

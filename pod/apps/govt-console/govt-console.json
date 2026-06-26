@@ -1,0 +1,5 @@
+{
+  "name": "govt-console",
+  "description": "CrackWatch Government Command Center — the production React dashboard, running on a Lemma pod (live reports, AI triage, cost-at-risk, contractor accountability).",
+  "public_slug": "crackwatch-console"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "reports",
+  "primary_key_column": "id",
+  "enable_rls": false,
+  "visibility": "POD",
+  "columns": [
+    { "name": "ref", "type": "SERIAL", "auto": true, "unique": true, "description": "Human-friendly report number" },
+    { "name": "title", "type": "TEXT", "max_length": 240, "description": "Short label, e.g. 'Pothole on MG Road, Ward 7'" },
+    { "name": "photo", "type": "FILE_PATH", "max_length": 500, "description": "Damage image in pod files" },
+    { "name": "description", "type": "TEXT", "description": "Citizen's free-text report" },
+    { "name": "location_text", "type": "TEXT", "max_length": 300 },
+    { "name": "sector", "type": "TEXT", "max_length": 80, "description": "Ward / zone / jurisdiction" },
+    { "name": "lat", "type": "FLOAT" },
+    { "name": "lng", "type": "FLOAT" },
+    { "name": "reporter_channel", "type": "ENUM", "default": "web", "options": ["web", "whatsapp", "telegram", "app"] },
+    { "name": "reporter_contact", "type": "TEXT", "max_length": 120 },
+
+    { "name": "damage_type", "type": "ENUM", "options": ["pothole", "longitudinal_crack", "transverse_crack", "alligator_crack", "spalling", "corrosion", "leak", "building_crack", "pipe_damage", "other"] },
+    { "name": "severity", "type": "FLOAT", "description": "Composite 0-100 score" },
+    { "name": "severity_label", "type": "ENUM", "options": ["minor", "warning", "critical"] },
+    { "name": "area_ratio", "type": "FLOAT", "description": "Damage area as % of frame" },
+    { "name": "confidence", "type": "FLOAT" },
+    { "name": "failure_forecast", "type": "TEXT", "max_length": 300, "description": "Predicted time-to-failure / risk" },
+
+    { "name": "est_cost_inr", "type": "INTEGER", "description": "Estimated repair cost now (INR)" },
+    { "name": "cost_if_ignored_inr", "type": "INTEGER", "description": "Projected cost if left unrepaired (INR)" },
+    { "name": "repair_method", "type": "TEXT", "max_length": 200 },
+    { "name": "repair_eta", "type": "TEXT", "max_length": 80 },
+    { "name": "crew_size", "type": "INTEGER" },
+    { "name": "priority_score", "type": "INTEGER", "description": "Urgency rank (higher = more urgent)" },
+
+    { "name": "status", "type": "ENUM", "required": true, "default": "new", "options": ["new", "triaged", "pending_approval", "dispatched", "resolved", "rejected"] },
+    { "name": "assigned_contractor_id", "type": "UUID", "description": "contractors.id (no FK constraint by design)" },
+    { "name": "assigned_contractor", "type": "TEXT", "max_length": 160 },
+    { "name": "ai_analysis", "type": "JSON", "description": "Raw triage-agent output" },
+    { "name": "triage_notes", "type": "TEXT" },
+    { "name": "workflow_run_id", "type": "TEXT", "max_length": 80 }
+  ],
+  "config": {}
+}

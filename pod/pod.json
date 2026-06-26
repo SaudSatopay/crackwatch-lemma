@@ -1,0 +1,5 @@
+{
+  "format_version": 2,
+  "name": "crackwatch",
+  "description": "Civic infrastructure-damage command center — citizens report damage; an AI triages severity, repair cost, and cost-if-ignored; inspectors approve dispatch to accountable contractors."
+}

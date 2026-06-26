@@ -1,0 +1,7 @@
+{
+  "name": "on-new-report",
+  "schedule_type": "DATASTORE",
+  "config": { "table_name": "reports", "operations": ["INSERT"] },
+  "workflow_name": "report-intake",
+  "is_active": false
+}

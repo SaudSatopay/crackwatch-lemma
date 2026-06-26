@@ -1,0 +1,5 @@
+{
+  "name": "command-center",
+  "description": "CrackWatch operations board — live priority queue of infrastructure-damage reports, cost-at-risk, and the contractor accountability leaderboard.",
+  "public_slug": "crackwatch"
+}

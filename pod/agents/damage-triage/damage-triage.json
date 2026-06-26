@@ -1,0 +1,37 @@
+{
+  "name": "damage-triage",
+  "description": "Classifies citizen-reported infrastructure damage from a photo + description and scores severity, grounded on the CrackWatch rubric.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD"],
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "report_id": { "type": "string", "description": "reports.id to analyze (read the row for description/photo/sector)" },
+      "description": { "type": "string" },
+      "photo": { "type": "string" }
+    },
+    "required": ["report_id"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "damage_type": { "type": "string", "enum": ["pothole", "longitudinal_crack", "transverse_crack", "alligator_crack", "spalling", "corrosion", "leak", "building_crack", "pipe_damage", "other"] },
+      "severity": { "type": "number", "description": "Composite 0-100 score per the rubric" },
+      "severity_label": { "type": "string", "enum": ["minor", "warning", "critical"] },
+      "area_ratio": { "type": "number", "description": "Damage area as percent of the frame (0-100)" },
+      "confidence": { "type": "number", "description": "0-1 certainty in the classification" },
+      "summary": { "type": "string", "description": "One-line plain-English description of the damage" },
+      "failure_forecast": { "type": "string", "description": "Honest time-to-failure estimate based on severity + type" },
+      "recommended_action": { "type": "string" }
+    },
+    "required": ["damage_type", "severity", "severity_label", "summary"]
+  },
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "reports",
+        "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+      { "resource_type": "folder", "resource_name": "/knowledge",
+        "permission_ids": ["folder.read"] }
+    ]
+  }
+}

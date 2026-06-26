@@ -1,0 +1,12 @@
+{
+  "name": "score_report",
+  "description": "Compute repair cost, cost-if-ignored, repair plan and priority from a triaged damage classification, and write them onto the report.",
+  "type": "API",
+  "code": { "$file": "code.py" },
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "reports",
+        "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] }
+    ]
+  }
+}

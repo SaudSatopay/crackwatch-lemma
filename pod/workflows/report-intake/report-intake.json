@@ -1,0 +1,83 @@
+{
+  "name": "report-intake",
+  "description": "New report -> AI triage -> cost scoring -> (critical) inspector approval -> dispatch to a contractor.",
+  "start": { "type": "DATASTORE_EVENT", "config": { "table_name": "reports", "operations": ["INSERT"] } },
+  "nodes": [
+    {
+      "id": "triage", "type": "AGENT", "label": "AI triage",
+      "config": {
+        "agent_name": "damage-triage",
+        "input_mapping": {
+          "report_id": { "type": "expression", "value": "start.metadata.record_id" }
+        }
+      }
+    },
+    {
+      "id": "score", "type": "FUNCTION", "label": "Score cost & priority",
+      "config": {
+        "function_name": "score_report",
+        "input_mapping": {
+          "report_id": { "type": "expression", "value": "start.metadata.record_id" },
+          "damage_type": { "type": "expression", "value": "triage.damage_type" },
+          "severity": { "type": "expression", "value": "triage.severity" },
+          "severity_label": { "type": "expression", "value": "triage.severity_label" },
+          "area_ratio": { "type": "expression", "value": "triage.area_ratio", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "route", "type": "DECISION", "label": "Critical?",
+      "config": {
+        "rules": [
+          { "condition": "score.severity_label == 'critical'", "next_node_id": "approval" }
+        ]
+      }
+    },
+    {
+      "id": "approval", "type": "FORM", "label": "Inspector approval",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "approved": { "type": "boolean", "description": "Approve dispatch of this critical repair?" },
+            "note": { "type": "string" }
+          },
+          "required": ["approved"]
+        },
+        "ui_schema": { "ui:order": ["approved", "note"] }
+      }
+    },
+    {
+      "id": "dispatch_after_approval", "type": "FUNCTION", "label": "Dispatch (approved)",
+      "config": {
+        "function_name": "dispatch_repair",
+        "input_mapping": {
+          "report_id": { "type": "expression", "value": "start.metadata.record_id" },
+          "approved": { "type": "expression", "value": "approval.approved" },
+          "note": { "type": "expression", "value": "approval.note", "optional": true },
+          "actor": { "type": "literal", "value": "inspector" }
+        }
+      }
+    },
+    {
+      "id": "auto_dispatch", "type": "FUNCTION", "label": "Auto-dispatch (non-critical)",
+      "config": {
+        "function_name": "dispatch_repair",
+        "input_mapping": {
+          "report_id": { "type": "expression", "value": "start.metadata.record_id" },
+          "approved": { "type": "literal", "value": true },
+          "actor": { "type": "literal", "value": "system" }
+        }
+      }
+    },
+    { "id": "end", "type": "END", "label": "Done" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "triage", "target": "score" },
+    { "id": "e2", "source": "score", "target": "route" },
+    { "id": "e3", "source": "route", "target": "auto_dispatch", "label": "non-critical (default else-edge)" },
+    { "id": "e4", "source": "approval", "target": "dispatch_after_approval" },
+    { "id": "e5", "source": "dispatch_after_approval", "target": "end" },
+    { "id": "e6", "source": "auto_dispatch", "target": "end" }
+  ]
+}
